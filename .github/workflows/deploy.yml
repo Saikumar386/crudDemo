@@ -36,3 +36,29 @@ jobs:
             docker compose down
             docker compose up -d --build
             docker image prune -f
+
+            # Install Nginx if not installed
+            if ! command -v nginx >/dev/null 2>&1; then
+              sudo dnf install -y nginx
+              sudo systemctl enable nginx
+            fi
+
+            # Create Nginx reverse proxy config
+            sudo tee /etc/nginx/conf.d/crudDemo.conf > /dev/null <<'EOF'
+            server {
+                listen 80;
+                server_name _;
+
+                location / {
+                    proxy_pass http://127.0.0.1:8080;
+                    proxy_set_header Host $host;
+                    proxy_set_header X-Real-IP $remote_addr;
+                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                    proxy_set_header X-Forwarded-Proto $scheme;
+                }
+            }
+            EOF
+
+            # Test and restart Nginx
+            sudo nginx -t
+            sudo systemctl restart nginx
