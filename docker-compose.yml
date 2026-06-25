@@ -22,7 +22,7 @@ services:
     container_name: crud-demo-app
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
     environment:
       DB_HOST: mysql
       DB_PORT: 3306
