@@ -1,0 +1,37 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: crud-demo-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-Admin@123}
+      MYSQL_DATABASE: ${DB_NAME:-crudDemo}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_PASSWORD:-Admin@123}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  app:
+    image: ${DOCKER_IMAGE:-crud-demo-app:latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: crud-demo-app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-crudDemo}
+      DB_USER: root
+      DB_PASSWORD: ${DB_PASSWORD:-Admin@123}
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  mysql_data:
