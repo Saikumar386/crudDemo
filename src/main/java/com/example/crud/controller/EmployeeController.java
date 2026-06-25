@@ -29,14 +29,14 @@ public class EmployeeController {
     }
 
     // CREATE -> POST /api/employees
-    @PostMapping
+    @PostMapping("/save")
     public ResponseEntity<Employee> createEmployee(@Valid @RequestBody Employee employee) {
         Employee saved = employeeService.createEmployee(employee);
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 
     // READ ALL -> GET /api/employees
-    @GetMapping
+    @GetMapping("getAll")
     public ResponseEntity<List<Employee>> getAllEmployees() {
         return ResponseEntity.ok(employeeService.getAllEmployees());
     }
