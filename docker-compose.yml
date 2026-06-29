@@ -15,14 +15,11 @@ services:
       retries: 10
 
   app:
-    image: ${DOCKER_IMAGE:-crud-demo-app:latest}
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ${DOCKER_IMAGE}
     container_name: crud-demo-app
     restart: unless-stopped
     ports:
-      - "127.0.0.1:8080:8080"
+      - "8080:8080"
     environment:
       DB_HOST: mysql
       DB_PORT: 3306
